@@ -131,28 +131,38 @@ int main()
     bool foundMin = false;
     long long minimumLocation = -1;
 
-
-    for (long long seed : seeds)
+    for (int index = 0; index < (int)seeds.size(); index += 2)
     {
-        long long soil = get_value_from_tuple_vector(seedToSoil, seed);
-        long long fertilizer = get_value_from_tuple_vector(soilToFertilizer, soil);
-        long long water = get_value_from_tuple_vector(fertilizerToWater, fertilizer);
-        long long ligth = get_value_from_tuple_vector(waterToLight, water);
-        long long temperature = get_value_from_tuple_vector(lightToTemperature, ligth);
-        long long humidity = get_value_from_tuple_vector(temperatureToHumidity, temperature);
-        long long location = get_value_from_tuple_vector(humidityToLocation, humidity);
+        long long start = seeds[index];
+        long long range = seeds[index + 1];
 
-        if (!foundMin)
+        std::cout << "Starting: " << start << '\n';
+
+        for (long long offset = 0; offset < range; offset++)
         {
-            minimumLocation = location;
-            foundMin = true;
-            continue;
+            long long currentSeed = start + offset;
+
+            long long soil = get_value_from_tuple_vector(seedToSoil, currentSeed);
+            long long fertilizer = get_value_from_tuple_vector(soilToFertilizer, soil);
+            long long water = get_value_from_tuple_vector(fertilizerToWater, fertilizer);
+            long long ligth = get_value_from_tuple_vector(waterToLight, water);
+            long long temperature = get_value_from_tuple_vector(lightToTemperature, ligth);
+            long long humidity = get_value_from_tuple_vector(temperatureToHumidity, temperature);
+            long long location = get_value_from_tuple_vector(humidityToLocation, humidity);
+
+            if (!foundMin)
+            {
+                minimumLocation = location;
+                foundMin = true;
+                continue;
+            }
+
+            if (location < minimumLocation)
+                minimumLocation = location;
         }
 
-        if (location < minimumLocation)
-            minimumLocation = location;
+        std::cout << "Done: " << start << "\n\n";
     }
-    
 
     std::cout << minimumLocation << '\n';
 
