@@ -153,7 +153,6 @@ int main()
             minimumLocation = location;
     }
     
-
     std::cout << minimumLocation << '\n';
 
     return 0;

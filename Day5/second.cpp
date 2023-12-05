@@ -11,7 +11,7 @@ typedef struct
     long long rangeLength;
 } tuple;
 
-tuple create_tuple(long long destinationStart, long long sourceStart, long long rangeLength)
+inline tuple create_tuple(long long destinationStart, long long sourceStart, long long rangeLength)
 {
     tuple newTuple;
 
@@ -42,7 +42,7 @@ std::vector<std::string> split(std::string str, char separator)
     return strings;
 }
 
-std::vector<long long> vector_of_string_to_vector_of_long(std::vector<std::string>& vector)
+inline std::vector<long long> vector_of_string_to_vector_of_long(std::vector<std::string>& vector)
 {
     std::vector<long long> newVector{};
 
@@ -52,14 +52,14 @@ std::vector<long long> vector_of_string_to_vector_of_long(std::vector<std::strin
     return newVector;
 }
 
-std::vector<long long> get_vector_long_from_string(std::string& text)
+inline std::vector<long long> get_vector_long_from_string(std::string& text)
 {
     std::vector<std::string> splitText = split(text, ' ');
 
     return vector_of_string_to_vector_of_long(splitText);
 }
 
-long long get_value_from_tuple_vector(std::vector<tuple>& vector, long long key)
+inline long long get_value_from_tuple_vector(std::vector<tuple>& vector, long long key)
 {
     for (tuple& currentTuple : vector)
     {
@@ -92,6 +92,8 @@ int main()
     seedsString = seedsString.substr(1, seedsString.size() - 1);
 
     std::vector<long long> seeds = get_vector_long_from_string(seedsString);
+
+    clock_t start = clock();
 
     while (input.getline(lineChar, 250))
     {
@@ -164,7 +166,11 @@ int main()
         std::cout << "Done: " << start << "\n\n";
     }
 
+    clock_t end = clock();
+
     std::cout << minimumLocation << '\n';
+
+    std::cout << "Time elapsed: " << (end - start) / CLOCKS_PER_SEC << '\n';
 
     return 0;
 }
