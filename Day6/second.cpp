@@ -7,11 +7,11 @@
 
 typedef struct 
 {
-    int time;
-    int distance;
+    uint64_t time;
+    uint64_t distance;
 } race;
 
-inline race create_race(int time, int distance)
+inline race create_race(uint64_t time, uint64_t distance)
 {
     race newRace;
     newRace.time = time;
@@ -24,11 +24,11 @@ std::vector<std::string> split(std::string str, char separator)
 {
     std::vector<std::string> strings = std::vector<std::string>{};
 
-    long long startIndex = 0, endIndex = 0;
-    for (long long i = 0; i <= (long long)str.size(); i++) {
+    uint64_t startIndex = 0, endIndex = 0;
+    for (uint64_t i = 0; i <= (uint64_t)str.size(); i++) {
         
         // If we reached the end of the word or the end of the input.
-        if (str[i] == separator || i == (long long)str.size()) {
+        if (str[i] == separator || i == (uint64_t)str.size()) {
             endIndex = i;
             std::string temp;
             temp.append(str, startIndex, endIndex - startIndex);
@@ -40,7 +40,7 @@ std::vector<std::string> split(std::string str, char separator)
     return strings;
 }
 
-void remove_empty(std::vector<std::string>& vector)
+inline void remove_empty(std::vector<std::string>& vector)
 {
     std::remove_if(vector.begin(), vector.end(), [](const std::string& text){return text.empty();});
 }
@@ -51,7 +51,7 @@ void remove_leading_whitespaces(std::string& text)
         text = text.substr(1, text.size() - 1);
 }
 
-inline int calculate_distance(int startTime, int raceTime, int speed)
+inline uint64_t calculate_distance(uint64_t startTime, uint64_t raceTime, uint64_t speed)
 {
     return speed * (raceTime - startTime);
 }
@@ -91,34 +91,56 @@ int main()
     remove_empty(times);
     remove_empty(distances);
 
-    std::vector<race> races{};
     int index = 0;
+
+    std::string totalTimeString = "";
+    std::string totalDistanceString = "";
+
     while (times[index].empty() == false && distances[index].empty() == false)
     {
-        race newRace = create_race(atoi(times[index].c_str()), atoi(distances[index].c_str()));
-
-        races.push_back(newRace);
+        totalTimeString += times[index];
+        totalDistanceString += distances[index];
 
         index++;
     }
 
-    int totalWays = 1;
+    uint64_t totalTime = atol(totalTimeString.c_str());
+    uint64_t totalDistance = atol(totalDistanceString.c_str());
 
-    for (race& currentRace : races)
+    race bigRace = create_race(totalTime, totalDistance);
+
+    uint64_t firstWinningTime = 0;
+    uint64_t lastWinningTime = totalTime;
+
+    uint64_t currentTime = 0;
+    do 
     {
-        int waysToWinCurrent = 0;
-        for (int start = 1; start < currentRace.time; start++)
-        {
-            int distanceCovered = calculate_distance(start, currentRace.time, start);
+        
+        uint64_t distanceCovered = calculate_distance(currentTime, bigRace.time, currentTime);
 
-            if (distanceCovered > currentRace.distance)
-                waysToWinCurrent++;
-        }
+        if (distanceCovered > bigRace.distance)
+            firstWinningTime = currentTime;
 
-        totalWays *= waysToWinCurrent;
-    }
+        currentTime++;
+    } 
+    while (firstWinningTime == 0);
 
-    std::cout << totalWays << '\n';
+    currentTime = totalTime;
+    bool stop = false;
+    do 
+    {
+        uint64_t distanceCovered = calculate_distance(currentTime, bigRace.time, currentTime);
+
+        if (distanceCovered <= bigRace.distance)
+            lastWinningTime = currentTime - 1;    
+        else
+            stop = true;
+
+        currentTime--;
+    } 
+    while (!stop);
+
+    std::cout << lastWinningTime - firstWinningTime + 1 << '\n';
 
     return 0;
 }
